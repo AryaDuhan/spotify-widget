@@ -1,7 +1,3 @@
-///////////////
-// PARAMETRS //
-///////////////
-
 const queryString = window.location.search;
 const urlParams = new URLSearchParams(queryString);
 
@@ -12,10 +8,6 @@ const redirect_uri = `${baseURL}/configure`;
 let refresh_token = "";
 let access_token = "";
 let browserSourceURL = "";
-
-/////////////////////////
-// AUTHORIZATION STUFF //
-/////////////////////////
 
 function RequestAuthorization() {
   const client_id = document.getElementById("client_id_box").value;
@@ -33,7 +25,6 @@ function RequestAuthorization() {
   window.location.href = url;
 }
 
-// If there is no code in the query string, direct the user to authorize their account
 if (code != "") {
   FetchAccessToken(code);
 } else {
@@ -53,7 +44,6 @@ async function FetchAccessToken(code) {
   body += "&client_secret=" + client_secret;
   console.log(body);
 
-  // Get the current player information from Spotify
   const response = await fetch("https://accounts.spotify.com/api/token", {
     method: "POST",
     headers: {
@@ -63,12 +53,11 @@ async function FetchAccessToken(code) {
     body: body,
   });
 
-  // If we got a response, save the access token
   if (response.ok) {
     const responseData = await response.json();
     console.debug(responseData);
-    refresh_token = responseData.refresh_token; // Unsure if we need to replace the refresh_token but do it just in case
-    access_token = responseData.access_token; // Save access token for all future API calls
+    refresh_token = responseData.refresh_token;
+    access_token = responseData.access_token;
 
     browserSourceURL = `${baseURL}?client_id=${client_id}&client_secret=${client_secret}&refresh_token=${refresh_token}`;
     document.getElementById("authorizationBox").style.display = "inline";
@@ -77,28 +66,21 @@ async function FetchAccessToken(code) {
   }
 }
 
-///////////////////////////
-// BUTTON CLICK HANDLERS //
-///////////////////////////
-
 const clientIdBox = document.getElementById("client_id_box");
 const clientSecretBox = document.getElementById("client_secret_box");
 const authorizeButton = document.getElementById("authorizeButton");
 
-// Function to check if either input is empty
 function checkInputs() {
   if (clientIdBox.value.trim() === "" || clientSecretBox.value.trim() === "") {
-    authorizeButton.disabled = true; // Disable the button
+    authorizeButton.disabled = true;
   } else {
-    authorizeButton.disabled = false; // Enable the button
+    authorizeButton.disabled = false;
   }
 }
 
-// Listen for changes in the input boxes
 clientIdBox.addEventListener("input", checkInputs);
 clientSecretBox.addEventListener("input", checkInputs);
 
-// Initial check when the page loads, just in case
 checkInputs();
 
 function CopyToURL() {

@@ -205,10 +205,5 @@ function resize() {
   outer.style.transform = "translate(-50%, 50%) scale(" + scale + ")";
 }
 
-if (hideAlbumArt) {
-  document.getElementById("albumArtBox").style.display = "none";
-  document.getElementById("songInfoBox").style.width = "calc(100% - 20px)";
-}
-
 RefreshAccessToken();
 GetCurrentlyPlaying();
