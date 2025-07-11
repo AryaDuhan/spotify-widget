@@ -1,194 +1,167 @@
+/* Custom Properties */
 * {
-  --corner-radius: 10px;
-  --album-art-size: 100px;
+    --corner-radius: 10px;
+    --album-art-size: 100px;
+    box-sizing: border-box; /* Added for more predictable sizing */
 }
 
+/* Base Body Styles */
 body {
-  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica,
-    Arial, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+    margin: 0; /* Remove default body margin */
+    display: flex; /* Use flexbox to center content */
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh; /* Ensure body takes full viewport height */
+    background-color: #222; /* A dark background to better see the widget */
+    overflow: hidden; /* Prevent scrollbars if content slightly overflows */
 }
 
+/* Status Container - for messages like "Connecting...", "Paused" */
 #statusContainer {
-  font-weight: 500;
-  font-size: 30px;
-  text-align: center;
-  background-color: #d12025;
-  color: white;
-  padding: 10px;
-  border-radius: 10px;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  opacity: 0;
+    font-weight: 500;
+    font-size: 30px;
+    text-align: center;
+    background-color: #d12025;
+    color: white;
+    padding: 10px;
+    border-radius: var(--corner-radius); /* Use variable for consistency */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0;
+    z-index: 10; /* Ensure it's on top of other elements */
+    transition: opacity 0.5s ease; /* Smooth fade for status messages */
+    pointer-events: none; /* Allows clicks to pass through when hidden */
 }
 
+/* Main Player Container */
 #mainContainer {
-  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica,
-    Arial, sans-serif;
-  display: flex;
-  position: absolute;
-  height: var(--album-art-size);
-  margin: 20px;
-  filter: drop-shadow(15px 15px 7px rgba(0, 0, 0, 1));
-  width: 100%;
-  max-width: 500px;
-  bottom: calc(50% - 20px);
-  left: 50%;
-  opacity: 0;
-  transition: all 0.5s ease;
+    font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+    display: flex;
+    position: relative; /* Changed from absolute to make it easier to center with body flex */
+    height: var(--album-art-size); /* Fixed height based on album art size */
+    width: 100%;
+    max-width: 500px; /* Limits width on larger screens */
+    padding: 0 20px; /* Added horizontal padding for responsiveness on smaller screens */
+    filter: drop-shadow(0px 8px 15px rgba(0, 0, 0, 0.5)); /* **Refined shadow:** softer, less offset */
+    opacity: 0; /* Starts hidden, JS controls visibility */
+    transition: all 0.5s ease; /* Smooth transition for visibility and position */
+    transform: translateY(-50%); /* Initial Y offset for slide-in effect */
 }
 
+/* Album Art Box */
 #albumArtBox {
-  background: rgba(0, 0, 0, 0.5);
-  position: relative;
-  border-radius: var(--corner-radius);
-  overflow: hidden;
-  margin: 0px 8px 0px 0px;
-  object-fit: cover;
-  width: var(--album-art-size);
+    background: rgba(0, 0, 0, 0.5);
+    position: relative;
+    border-radius: var(--corner-radius); /* Consistent corner radius */
+    overflow: hidden;
+    margin-right: 15px; /* **Increased margin** for better separation from song info */
+    width: var(--album-art-size);
+    flex-shrink: 0; /* Prevents album art from shrinking on smaller screens */
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.3); /* Subtle inner shadow for depth */
 }
 
 #albumArt {
-  width: 100%;
-  height: 100%;
-  position: absolute;
-  top: 0%;
-  object-fit: cover;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    object-fit: cover;
+    border-radius: var(--corner-radius); /* Ensure image itself respects radius */
 }
+
 #albumArtBack {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    position: absolute; /* Ensures consistent layering */
+    top: 0;
+    left: 0;
+    z-index: -1; /* Ensures it's behind #albumArt if both are present */
+    border-radius: var(--corner-radius); /* Consistent corner radius */
 }
 
-#albumArtBox img {
-  /* width: 100%;
-	height: 100%;
-	object-fit: cover; */
-}
-
+/* Song Information Box */
 #songInfoBox {
-  position: relative;
-  color: white;
-  width: calc(100% - 125px);
-  display: flex;
-  flex-direction: column;
-  flex: 0 1 auto;
-  justify-content: center;
-  z-index: 1;
-  text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.5);
-  overflow: hidden;
-  z-index: 4;
+    position: relative;
+    color: white;
+    flex-grow: 1; /* Allows it to take available space */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    z-index: 1;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.6); /* **Refined text shadow:** softer */
+    overflow: hidden; /* Ensures text ellipsis works */
+    border-radius: var(--corner-radius); /* Inherit rounded corners from songInfo for the whole box */
 }
 
 #songInfo {
-  background: rgba(0, 0, 0, 0.5);
-  opacity: 0.9;
-  position: relative;
-  border-radius: var(--corner-radius);
-  padding: 0px 20px;
-  height: 100%;
-  overflow: hidden;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.4) 100%); /* **Subtle gradient** for depth */
+    opacity: 0.9;
+    position: relative;
+    border-radius: var(--corner-radius); /* Consistent corner radius */
+    padding: 15px 20px; /* **Adjusted padding** for better internal spacing */
+    height: 100%;
+    overflow: hidden;
+    display: flex; /* Use flex to center content vertically */
+    flex-direction: column;
+    justify-content: center;
 }
 
+/* This div is effectively replaced by flex properties on #songInfo for better control */
 #IAmRunningOutOfNamesForTheseBoxes {
-  position: absolute;
-  width: calc(100% - 40px);
-  position: absolute;
-  top: 50%;
-  -ms-transform: translateY(-50%);
-  transform: translateY(-50%);
+    position: static; /* Remove absolute positioning from previous version */
+    transform: none; /* Remove transform from previous version */
+    width: auto; /* Allow content to dictate width */
 }
 
+/* Background Art for blur effect */
 #backgroundArt {
-  position: absolute;
-  height: 100%;
-  width: 100%;
-  border-radius: var(--corner-radius);
-  overflow: hidden;
-  z-index: -1;
-  opacity: 0.9;
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    border-radius: var(--corner-radius); /* Consistent corner radius */
+    overflow: hidden;
+    z-index: -1;
+    opacity: 0.9;
+    top: 0;
+    left: 0;
 }
 
 #backgroundImage {
-  filter: blur(20px);
-  position: absolute;
-  width: 140%;
-  top: 50%;
-  left: 50%;
-  transform: translateX(-50%) translateY(-50%);
+    filter: blur(12px) brightness(80%); /* **Softer blur and slight brightness** */
+    position: absolute;
+    width: 140%;
+    height: 140%; /* Added height to ensure full coverage for blur */
+    top: 50%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-50%);
+    object-fit: cover; /* Ensures image covers background area */
 }
 
 #backgroundImageBack {
-  filter: blur(20px);
-  position: absolute;
-  width: 140%;
-  top: 50%;
-  left: 50%;
-  transform: translateX(-50%) translateY(-50%);
-  z-index: -1;
+    filter: blur(12px) brightness(80%); /* Consistent filter */
+    position: absolute;
+    width: 140%;
+    height: 140%;
+    top: 50%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-50%);
+    z-index: -1;
+    object-fit: cover;
 }
 
+/* Artist Label */
 #artistLabel {
-  font-size: 16px;
-  font-weight: 400;
-  line-height: 1;
-  white-space: nowrap;
-  transition: all 0.5s ease;
+    font-size: 16px;
+    font-weight: 500; /* **Slightly bolder artist** for better presence */
+    line-height: 1.3; /* **Adjusted line-height** for better readability */
+    white-space: nowrap;
+    transition: all 0.5s ease;
+    margin-top: 2px; /* Small margin between song and artist */
 }
 
-#songLabel {
-  font-weight: bold;
-  font-size: 20px;
-  width: calc(100%);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  transition: all 0.5s ease;
-}
-
-#progressBg {
-  margin-top: 15px;
-  width: 100%;
-  height: auto;
-  border-radius: 5px;
-  background-color: #1f1f1f;
-}
-
-#progressBar {
-  border-radius: 5px;
-  height: 5px;
-  width: 20%;
-  background-color: #ffffff;
-  margin: 10px 0px;
-  transition: all 1s ease;
-}
-
-#times {
-  position: relative;
-  height: 16px;
-  font-size: 16px;
-  font-weight: 700;
-  line-height: 2.2;
-}
-
-#progressTime {
-  position: absolute;
-}
-
-#timeRemaining {
-  position: absolute;
-  width: 100%;
-  text-align: right;
-}
-
-.text-show {
-  opacity: 1;
-  transition: all 0.25s ease;
-}
-
-.text-fade {
-  opacity: 0;
-  transition: all 0.25s ease;
-}
+/*

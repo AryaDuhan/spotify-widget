@@ -7,7 +7,6 @@ let refresh_token = urlParams.get("refresh_token") || "";
 let access_token = "";
 
 const visibilityDuration = urlParams.get("duration") || 0;
-const hideAlbumArt = urlParams.has("hideAlbumArt");
 
 let currentState = false;
 let currentSongUri = "";
