@@ -197,13 +197,13 @@ let outer = document.getElementById("mainContainer"),
   maxWidth = outer.clientWidth + 50,
   maxHeight = outer.clientHeight;
 
-window.addEventListener("resize", resize);
+// window.addEventListener("resize", resize);
 
-resize();
-function resize() {
-  const scale = window.innerWidth / maxWidth;
-  outer.style.transform = "translate(-50%, 50%) scale(" + scale + ")";
-}
+// resize();
+// function resize() {
+//   const scale = window.innerWidth / maxWidth;
+//   outer.style.transform = "translate(-50%, 50%) scale(" + scale + ")";
+// }
 
 RefreshAccessToken();
 GetCurrentlyPlaying();
