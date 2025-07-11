@@ -206,3 +206,23 @@ function resize() {
 
 RefreshAccessToken();
 GetCurrentlyPlaying();
+
+// script.js
+function updateProgress(currentTime, totalTime, progress) {
+  document.getElementById("currentTime").textContent = currentTime;
+  document.getElementById("totalTime").textContent = totalTime;
+  document.getElementById("progressFill").style.width = progress + "%";
+}
+
+function updateSongInfo(title, artist, albumArt) {
+  document.getElementById("songTitle").textContent = title;
+  document.getElementById("artistName").textContent = artist;
+  document.getElementById("albumArt").src = albumArt;
+  document.getElementById("backgroundImage").src = albumArt;
+}
+
+let progress = 0;
+setInterval(() => {
+  progress = (progress + 1) % 100;
+  document.getElementById("progressFill").style.width = progress + "%";
+}, 1000);
